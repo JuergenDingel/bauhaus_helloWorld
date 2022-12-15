@@ -35,14 +35,14 @@ class FancyPropositions:
 
 # Call your variables whatever you want
 a = BasicPropositions("a")
-b = BasicPropositions("b")   
-c = BasicPropositions("c")
-d = BasicPropositions("d")
-e = BasicPropositions("e")
-# At least one of these will be true
-x = FancyPropositions("x")
-y = FancyPropositions("y")
-z = FancyPropositions("z")
+# b = BasicPropositions("b")   
+# c = BasicPropositions("c")
+# d = BasicPropositions("d")
+# e = BasicPropositions("e")
+# # At least one of these will be true
+# x = FancyPropositions("x")
+# y = FancyPropositions("y")
+# z = FancyPropositions("z")
 
 
 # Build an example full theory for your setting and return it.
@@ -72,16 +72,15 @@ if __name__ == "__main__":
     E = example_encoding()
     # Don't compile until you're finished adding all your constraints!
     T = E.compile()
-    T2 = Or([T,Var('W')]).negate()
     # E.introspect()
     # After compilation (and only after), you can check some of the properties
     # of your model:
-    print("\nSatisfiable: %s" % T2.satisfiable())
-    print(" #solutions: %d" % count_solutions(T2))
-    soln = T2.solve()
+    print("\nSatisfiable: %s" % T.satisfiable())
+    print(" #solutions: %d" % count_solutions(T))
+    soln = T.solve()
     # E.introspect(soln)    
     print("   Pretty print of theory:")
-    E.pprint(T2, soln)
+    E.pprint(T, soln)
     print("   Solution: %s" % soln)
     print("\nVariable likelihoods:")
     for v,vn in zip([a], 'a'):
