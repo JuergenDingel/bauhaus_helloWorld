@@ -3,7 +3,7 @@ from bauhaus import Encoding, proposition, constraint
 from bauhaus.utils import count_solutions, likelihood
 
 # These two lines make sure a faster SAT solver is used.
-from nnf import And, Or, Var, config
+from nnf import config
 config.sat_backend = "kissat"
 
 # Encoding that will store all of your constraints
@@ -11,13 +11,11 @@ E = Encoding()
 
 # To create propositions, create classes for them first, annotated with "@proposition" and the Encoding
 @proposition(E)
-class BasicPropositions:
-
+class BasicProp:
     def __init__(self, data):
         self.data = data
-
     def __repr__(self):
-        return f"A.{self.data}"
+        return f"B.{self.data}"
 
 
 # Different classes for propositions are useful because this allows for more dynamic constraint creation
@@ -25,25 +23,36 @@ class BasicPropositions:
 # that are instances of this class must be true by using a @constraint decorator.
 # other options include: at most one, exactly one, at most k, and implies all.
 # For a complete module reference, see https://bauhaus.readthedocs.io/en/latest/bauhaus.html
-# @constraint.at_least_one(E)
+@constraint.at_least_one(E)
 @proposition(E)
-class FancyPropositions:
+class AtLeast1Prop:
     def __init__(self, data):
         self.data = data
     def __repr__(self):
-        return f"A.{self.data}"
+        return f"AL1.{self.data}"
+
+@constraint.exactly_one(E)
+@proposition(E)
+class Exactly1Prop:
+    def __init__(self, data):
+        self.data = data
+    def __repr__(self):
+        return f"E1.{self.data}"
 
 # Call your variables whatever you want
-a = BasicPropositions("a")
-# b = BasicPropositions("b")   
-# c = BasicPropositions("c")
-# d = BasicPropositions("d")
-# e = BasicPropositions("e")
-# # At least one of these will be true
-# x = FancyPropositions("x")
-# y = FancyPropositions("y")
-# z = FancyPropositions("z")
+a = BasicProp("a")
+b = BasicProp("b")   
+c = BasicProp("c")
 
+# # At least one of these will be true
+x = AtLeast1Prop("x")
+y = AtLeast1Prop("y")
+z = AtLeast1Prop("z")
+
+# # Exactly one of these will be true
+i = Exactly1Prop("i")
+j = Exactly1Prop("j")
+k = Exactly1Prop("k")
 
 # Build an example full theory for your setting and return it.
 #
@@ -53,8 +62,8 @@ a = BasicPropositions("a")
 def example_encoding():
     # Add custom constraints by creating formulas with the variables you created. 
     
-    # E.add_constraint((a | b) & ~x)
-    # E.add_constraint((a | b) & ~x)
+    E.add_constraint((a | b) & ~x)
+    E.add_constraint((i | j | k))
     # Implication
     # E.add_constraint(y >> z)
     # Negate a formula    
@@ -63,7 +72,7 @@ def example_encoding():
     # for every instance of BasicPropositions, but you want to enforce it for a, b, and c.:
 #    constraint.add_exactly_one(E, a, b, c)
 
-    E.add_constraint((a | ~a))
+#    E.add_constraint((a | ~a))
     return E
  
 
