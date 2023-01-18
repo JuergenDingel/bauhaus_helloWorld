@@ -27,7 +27,6 @@ i = Prop("i")
 j = Prop("j")   
 k = Prop("k")
 
-# # At least one of these will be true
 x = Prop("x")
 y = Prop("y")
 z = Prop("z")
