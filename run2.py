@@ -11,47 +11,26 @@ E = Encoding()
 
 # To create propositions, create classes for them first, annotated with "@proposition" and the Encoding
 @proposition(E)
-class BasicProp:
+class Prop:
     def __init__(self, data):
         self.data = data
     def __repr__(self):
-        return f"B.{self.data}"
+        return f"P.{self.data}"
 
-
-# Different classes for propositions are useful because this allows for more dynamic constraint creation
-# for propositions within that class. For example, you can enforce that "at least one" of the propositions
-# that are instances of this class must be true by using a @constraint decorator.
-# other options include: at most one, exactly one, at most k, and implies all.
-# For a complete module reference, see https://bauhaus.readthedocs.io/en/latest/bauhaus.html
-@constraint.at_least_one(E)
-@proposition(E)
-class AtLeast1Prop:
-    def __init__(self, data):
-        self.data = data
-    def __repr__(self):
-        return f"L1.{self.data}"
-
-@constraint.exactly_one(E)
-@proposition(E)
-class Exactly1Prop:
-    def __init__(self, data):
-        self.data = data
-    def __repr__(self):
-        return f"E1.{self.data}"
 
 # Call your variables whatever you want
-a = BasicProp("a")
-b = BasicProp("b")   
-c = BasicProp("c")
+a = Prop("a")
+b = Prop("b")   
+c = Prop("c")
 
-i = AtLeast1Prop("i")
-j = AtLeast1Prop("j")   
-k = AtLeast1Prop("k")
+i = Prop("i")
+j = Prop("j")   
+k = Prop("k")
 
 # # At least one of these will be true
-x = Exactly1Prop("x")
-y = Exactly1Prop("y")
-z = Exactly1Prop("z")
+x = Prop("x")
+y = Prop("y")
+z = Prop("z")
 
 # Build an example full theory for your setting and return it.
 #
@@ -62,15 +41,15 @@ def example_encoding():
     # Add custom constraints by creating formulas with the variables you created. 
     
     E.add_constraint((a | b) & ~c)
-    E.add_constraint(x)
+    constraint.add_exactly_one(E, [i,j,k])
+    E.add_constraint(i)
+    constraint.add_at_least_one(E, [x,y,z])
+    E.add_constraint(x>>(y&z))
     # Implication
     # E.add_constraint(y >> z)
     # Negate a formula    
     # E.add_constraint(~(x & y))
-    # You can also add more customized "fancy" constraints. Use case: you don't want to enforce "exactly one"
-    # for every instance of BasicPropositions, but you want to enforce it for a, b, and c.:
-
-#    E.add_constraint((a | ~a))
+    # E.add_constraint((a | ~a))
     return E
  
 
@@ -90,7 +69,7 @@ if __name__ == "__main__":
         E.pprint(T, soln)
         print("   Solution: %s" % soln)
         for v in [a,b,c,i,j,k,x,y,z]:
-            print(" %s: \t%s" % (v, soln[v])) 
+            print(" %s: %s" % (v, soln[v])) 
 
         print("\nVariable likelihoods:")
         for v,vn in zip([a,b,c,i,j,k,x,y,z], 'abcijkxyz'):
